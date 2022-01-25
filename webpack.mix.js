@@ -1,5 +1,8 @@
 const mix = require('laravel-mix');
 
+import Alpine from 'alpinejs'
+window.Alpine = Alpine
+Alpine.start()
 /*
  |--------------------------------------------------------------------------
  | Mix Asset Management
@@ -13,6 +16,7 @@ const mix = require('laravel-mix');
 
 mix.js('resources/js/app.js', 'public/js')
     .sass('resources/css/material-kit.scss', 'public/css')
+    .js('resources/js/material-kit.js', 'public/js')
     .postCss('resources/css/app.css', 'public/css', [
         //
     ]);
