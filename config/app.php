@@ -231,5 +231,11 @@ return [
         'View' => Illuminate\Support\Facades\View::class,
 
     ],
+    
+    'cities' => [
+        ['name' => 'miami','lat' => '25.774', 'lng' => '-80.194', 'urlImg' => 'https://cdn.pixabay.com/photo/2019/01/05/18/24/miami-3915622_960_720.jpg'],
+        ['name' => 'orlando', 'lat' => '28.538', 'lng' => '-81.379', 'urlImg' => 'https://cdn.pixabay.com/photo/2017/02/22/21/33/parks-2090658_960_720.jpg'],
+        ['name' => 'new york', 'lat' => '40.779', 'lng' => '-73.969', 'urlImg' => 'https://cdn.pixabay.com/photo/2019/07/21/07/12/new-york-4352072_960_720.jpg']
+    ]
 
 ];

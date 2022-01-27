@@ -6,7 +6,7 @@
 @section('content')
     {{-- cabecera del contenido --}}
     <header class="header-2">
-        <div class="page-header min-vh-75" style="background-image: url('./assets/img/bg0.jpg')" loading="lazy">
+        <div class="page-header min-vh-75" style="background-image: url('https://cdn.pixabay.com/photo/2020/01/04/23/37/landscape-4742004_960_720.jpg')" loading="lazy">
             <span class="mask bg-gradient-primary opacity-4"></span>
             <div class="container">
                 <div class="row">
@@ -19,10 +19,14 @@
         </div>
     </header>
     {{-- contenido --}}
+    {{-- @dd(config('app.cities')) --}}
+    {{-- @foreach (config('app.cities') as $item)
+        @dd($item)
+    @endforeach --}}
     <div class="card card-body blur shadow-blur mx-3 mx-md-4 mt-n6">
         <section class="py-5">
             <div class="container">
-                <div class="row align-items-center">
+                <div x-data="weather()" x-init="await loadWeather()" class="row align-items-center">
                     <div class="row">
                         <div class="row justify-content-center text-center my-sm-5">
                             <div class="col-lg-6">
@@ -32,83 +36,54 @@
                             </div>
                         </div>
                     </div>
-                    {{-- Tarjetas de clima pre-establecidas --}}
-                    <div class="col-lg-4 ms-auto me-auto p-lg-4 mt-lg-0 mt-4">
-                        <div class="rotating-card-container">
-                            <div
-                                class="card card-rotate card-background card-background-mask-primary shadow-primary mt-md-0 mt-5">
-                                <div class="front front-background"
-                                    style="background-image: url(https://images.unsplash.com/photo-1569683795645-b62e50fbf103?ixlib=rb-1.2.1&amp;ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&amp;auto=format&amp;fit=crop&amp;w=987&amp;q=80); background-size: cover;">
-                                    <div class="card-body py-7 text-center">
-                                        <h3 class="text-white">Miami</h3>
-                                        <p class="text-white opacity-8">All the Bootstrap components that you need in a
-                                            development have been re-design with the new look.</p>
+                    {{-- Tarjetas de clima pre-establecidas --}}    
+                    <template x-for="(weather,index) in listWeather" :key="">
+                        <div class="col-lg-4 ms-auto me-auto p-lg-4 mt-lg-0 mt-4">
+                            <div class="rotating-card-container">
+                                <div
+                                    class="card card-rotate card-background card-background-mask-primary shadow-primary mt-md-0 mt-5">
+                                    <div class="front front-background"
+                                        :style="{ backgroundImage: url("weather.image") }"
+                                        style="background-size: cover;"
+                                        >
+                                        <div class="card-body py-5 text-center">
+                                            <h3>Hoy</h3>
+                                            <h2><span style="font-size: 5rem;" x-html="weather.temperature"></span>°c</h2>
+                                            <h3 class="text-white text-capitalize mb-0 mt-n4" x-text="weather.city"></h3>
+                                            <hr class="mt-0">
+                                            <h6 class="text-white mb-0">Temperatura Max - Min</h6>
+                                            <div class="maxmin">
+                                                <h2><span style="font-size: 2rem;" x-html="weather.maxmintemp.max"></span><small>°<i class="fas fa-arrow-up"></i></small></h2>
+                                                <h2><span style="font-size: 2rem;" x-html="weather.maxmintemp.min"></span><small>°<i class="fas fa-arrow-down"></i></small></h2>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="back back-background"
-                                    style="background-image: url(https://images.unsplash.com/photo-1498889444388-e67ea62c464b?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&amp;ixlib=rb-1.2.1&amp;auto=format&amp;fit=crop&amp;w=1365&amp;q=80); background-size: cover;">
-                                    <div class="card-body pt-7 text-center">
-                                        <h3 class="text-white">Discover More</h3>
-                                        <p class="text-white opacity-8"> You will save a lot of time going from prototyping
-                                            to full-functional code because all elements are implemented.</p>
-                                        <a href=".//sections/page-sections/hero-sections.html" target="_blank"
-                                            class="btn btn-white btn-sm w-50 mx-auto mt-3">Start with Headers</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 ms-auto me-auto p-lg-4 mt-lg-0 mt-4">
-                        <div class="rotating-card-container">
-                            <div
-                                class="card card-rotate card-background card-background-mask-primary shadow-primary mt-md-0 mt-5">
-                                <div class="front front-background"
-                                    style="background-image: url(https://images.unsplash.com/photo-1569683795645-b62e50fbf103?ixlib=rb-1.2.1&amp;ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&amp;auto=format&amp;fit=crop&amp;w=987&amp;q=80); background-size: cover;">
-                                    <div class="card-body py-7 text-center">
-                                        <h3 class="text-white">Orlando</h3>
-                                        <p class="text-white opacity-8">All the Bootstrap components that you need in a
-                                            development have been re-design with the new look.</p>
-                                    </div>
-                                </div>
-                                <div class="back back-background"
-                                    style="background-image: url(https://images.unsplash.com/photo-1498889444388-e67ea62c464b?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&amp;ixlib=rb-1.2.1&amp;auto=format&amp;fit=crop&amp;w=1365&amp;q=80); background-size: cover;">
-                                    <div class="card-body pt-7 text-center">
-                                        <h3 class="text-white">Discover More</h3>
-                                        <p class="text-white opacity-8"> You will save a lot of time going from prototyping
-                                            to full-functional code because all elements are implemented.</p>
-                                        <a href=".//sections/page-sections/hero-sections.html" target="_blank"
-                                            class="btn btn-white btn-sm w-50 mx-auto mt-3">Start with Headers</a>
+                                    <div class="back back-background"
+                                        style="background-image: url(https://images.unsplash.com/photo-1498889444388-e67ea62c464b?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&amp;ixlib=rb-1.2.1&amp;auto=format&amp;fit=crop&amp;w=1365&amp;q=80); background-size: cover;">
+                                        <div class="card-body pt-auto text-center">
+                                            <h2><span style="font-size: 5rem;" x-html="weather.humidity"></span>%</h2>
+                                            <h3 class="text-white mt-n4">Humedad</h3>
+                        
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-lg-4 ms-auto me-auto p-lg-4 mt-lg-0 mt-4">
-                        <div class="rotating-card-container">
-                            <div
-                                class="card card-rotate card-background card-background-mask-primary shadow-primary mt-md-0 mt-5">
-                                <div class="front front-background"
-                                    style="background-image: url(https://images.unsplash.com/photo-1569683795645-b62e50fbf103?ixlib=rb-1.2.1&amp;ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&amp;auto=format&amp;fit=crop&amp;w=987&amp;q=80); background-size: cover;">
-                                    <div class="card-body py-7 text-center">
-                                        <h3 class="text-white">New York</h3>
-                                        <p class="text-white opacity-8">All the Bootstrap components that you need in a
-                                            development have been re-design with the new look.</p>
-                                    </div>
-                                </div>
-                                <div class="back back-background"
-                                    style="background-image: url(https://images.unsplash.com/photo-1498889444388-e67ea62c464b?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&amp;ixlib=rb-1.2.1&amp;auto=format&amp;fit=crop&amp;w=1365&amp;q=80); background-size: cover;">
-                                    <div class="card-body pt-7 text-center">
-                                        <h3 class="text-white">Discover More</h3>
-                                        <p class="text-white opacity-8"> You will save a lot of time going from prototyping
-                                            to full-functional code because all elements are implemented.</p>
-                                        <a href=".//sections/page-sections/hero-sections.html" target="_blank"
-                                            class="btn btn-white btn-sm w-50 mx-auto mt-3">Start with Headers</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    </template>
+                  
                     {{-- fin de tarjetas de clima pre-establecidas --}}
+                </div>
+            </div>
+        </section>
+        <section>
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-8">
+                        mapa aqui
+                    </div>
+                    <div class="col-4">
+                        Buscador aquí
+                    </div>
                 </div>
             </div>
         </section>
@@ -139,4 +114,26 @@
         </div>
         <!-- -------   END PRE-FOOTER 2 - simple social line w/ title & 3 buttons    -------- -->
     </div>
+    <script>
+        function weather() {
+            return {
+                listWeather: [],
+                loadWeather: function() {
+                    window.axios.get('/api/getDefaultsCountry', {})
+                    .then((response) => {
+                    // console.log(response.data)
+                        this.listWeather = response.data
+                    })
+                    setInterval(() => {
+                        window.axios.get('/api/getDefaultsCountry', {})
+                        .then((response) => {
+                        // console.log(response.data)
+                            this.listWeather = response.data
+                        })
+                    },15000);
+                }
+                
+            }
+        }
+    </script>
 @endsection
