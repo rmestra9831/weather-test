@@ -6,7 +6,9 @@
 @section('content')
     {{-- cabecera del contenido --}}
     <header class="header-2">
-        <div class="page-header min-vh-75" style="background-image: url('https://cdn.pixabay.com/photo/2020/01/04/23/37/landscape-4742004_960_720.jpg')" loading="lazy">
+        <div class="page-header min-vh-75"
+            style="background-image: url('https://cdn.pixabay.com/photo/2020/01/04/23/37/landscape-4742004_960_720.jpg')"
+            loading="lazy">
             <span class="mask bg-gradient-primary opacity-4"></span>
             <div class="container">
                 <div class="row">
@@ -36,16 +38,14 @@
                             </div>
                         </div>
                     </div>
-                    {{-- Tarjetas de clima pre-establecidas --}}    
+                    {{-- Tarjetas de clima pre-establecidas --}}
                     <template x-for="(weather,index) in listWeather" :key="">
                         <div class="col-lg-4 ms-auto me-auto p-lg-4 mt-lg-0 mt-4">
                             <div class="rotating-card-container">
                                 <div
                                     class="card card-rotate card-background card-background-mask-primary shadow-primary mt-md-0 mt-5">
-                                    <div class="front front-background"
-                                        :style="{ backgroundImage: url("weather.image") }"
-                                        style="background-size: cover;"
-                                        >
+                                    <div class="front front-background" :style="{ backgroundImage: url(" weather.image") }"
+                                        style="background-size: cover;">
                                         <div class="card-body py-5 text-center">
                                             <h3>Hoy</h3>
                                             <h2><span style="font-size: 5rem;" x-html="weather.temperature"></span>°c</h2>
@@ -53,8 +53,12 @@
                                             <hr class="mt-0">
                                             <h6 class="text-white mb-0">Temperatura Max - Min</h6>
                                             <div class="maxmin">
-                                                <h2><span style="font-size: 2rem;" x-html="weather.maxmintemp.max"></span><small>°<i class="fas fa-arrow-up"></i></small></h2>
-                                                <h2><span style="font-size: 2rem;" x-html="weather.maxmintemp.min"></span><small>°<i class="fas fa-arrow-down"></i></small></h2>
+                                                <h2><span 
+                                                        x-html="weather.maxmintemp.max"></span><small class="contentArrowTemp">°<i
+                                                            class="fas fa-arrow-up"></i></small></h2>
+                                                <h2><span
+                                                        x-html="weather.maxmintemp.min"></span><small class="contentArrowTemp">°<i
+                                                            class="fas fa-arrow-down"></i></small></h2>
                                             </div>
                                         </div>
                                     </div>
@@ -63,14 +67,14 @@
                                         <div class="card-body pt-auto text-center">
                                             <h2><span style="font-size: 5rem;" x-html="weather.humidity"></span>%</h2>
                                             <h3 class="text-white mt-n4">Humedad</h3>
-                        
+
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </template>
-                  
+
                     {{-- fin de tarjetas de clima pre-establecidas --}}
                 </div>
             </div>
@@ -78,11 +82,20 @@
         <section>
             <div class="container">
                 <div class="row align-items-center">
-                    <div class="col-8">
-                        mapa aqui
+                    <div class="col-md-8 col-sm-12 order-md-first first-last">
+                        <div id="map">
+                            mapa aqui
+                        </div>
                     </div>
-                    <div class="col-4">
-                        Buscador aquí
+                    <div class="col-md-4 col-sm-12 order-md-last order-first">
+                        <div class="card h-auto p-4 mb-4">
+                            <strong class="text-center h5">Buscar Ciudad</strong>
+                            <form action="">
+                                <div class="input-group input-group-outline">
+                                    <input type="text" class="form-control">
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -120,19 +133,47 @@
                 listWeather: [],
                 loadWeather: function() {
                     window.axios.get('/api/getDefaultsCountry', {})
-                    .then((response) => {
-                    // console.log(response.data)
-                        this.listWeather = response.data
-                    })
-                    setInterval(() => {
-                        window.axios.get('/api/getDefaultsCountry', {})
                         .then((response) => {
-                        // console.log(response.data)
+                            // console.log(response.data)
                             this.listWeather = response.data
                         })
-                    },15000);
+                    setInterval(() => {
+                        window.axios.get('/api/getDefaultsCountry', {})
+                            .then((response) => {
+                                // console.log(response.data)
+                                this.listWeather = response.data
+                            })
+                    }, 15000);
                 }
-                
+            }
+        }
+
+        // Inicialización de google maps
+        let map, infoWindow;
+        // obtención de los datos desde config.app
+        var locations = {!! json_encode(config('app.cities')) !!};
+        function initMap() {
+            console.log(parseFloat(locations[2]['lat']));
+            map = new google.maps.Map(document.getElementById("map"), {
+                center: {
+                    lat: parseFloat(locations[2]['lat']),
+                    lng: parseFloat(locations[2]['lng'])
+                },
+                zoom: 4,
+            });
+            // Recorrido del array de datos para imprimir los marcadores
+            for (i = 0; i < locations.length; i++) {
+                marker = new google.maps.Marker({
+                    position: new google.maps.LatLng(locations[i]['lat'], locations[i]['lng']),
+                    map: map
+                });
+
+                google.maps.event.addListener(marker, 'click', (function(marker, i) {
+                    return function() {
+                        infowindow.setContent(locations[i][0]);
+                        infowindow.open(map, marker);
+                    }
+                })(marker, i));
             }
         }
     </script>

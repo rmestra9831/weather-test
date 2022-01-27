@@ -1,4 +1,18 @@
 .maxmin{
     display: flex;
     justify-content: space-evenly;
+    span{
+        font-size: 1.6rem;
+    }
+}
+
+.contentArrowTemp{
+    align-items: center !important;
+    display: inline-flex !important;
+    i{
+        font-size: 1rem !important;
+    }
+}
+#map{
+    height: 450px !important;
 }

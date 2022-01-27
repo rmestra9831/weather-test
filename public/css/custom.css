@@ -2,3 +2,18 @@
   display: flex;
   justify-content: space-evenly;
 }
+.maxmin span {
+  font-size: 1.6rem;
+}
+
+.contentArrowTemp {
+  align-items: center !important;
+  display: inline-flex !important;
+}
+.contentArrowTemp i {
+  font-size: 1rem !important;
+}
+
+#map {
+  height: 450px !important;
+}

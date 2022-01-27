@@ -1,27 +1,30 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title>@yield('title')</title>
-        <!-- Fonts -->
-        <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
-        <link rel="stylesheet" href="{{ asset('css/material-kit.css') }}">
-        <link rel="stylesheet" href="{{ asset('css/fontawesome.min.css') }}">
-        <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
-        <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
-        rel="stylesheet">
-        @livewireStyles
-        <script src="{{ asset('js/app.js') }}" defer></script>
-    </head>
-    <body class="antialiased">
-        @section('sidebar')
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>@yield('title')</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('css/material-kit.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/fontawesome.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    @livewireStyles
+    <script src="{{ asset('js/app.js') }}" defer></script>
+</head>
+
+<body class="antialiased">
+    @section('sidebar')
         <div>
             @yield('content')
         </div>
         @yield('script')
-        {{-- <script src="{{ asset('js/material-kit.js') }}"></script> --}}
+        <script async
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB66bjFDqCs9MqroCkLoyW9xWpMGzsRiLE&callback=initMap">
+        </script>
     </body>
     <footer>
         <script src="https://kit.fontawesome.com/0892879507.js" crossorigin="anonymous"></script>
@@ -33,4 +36,5 @@
         <script src="{{ asset('js/plugins/countup.min.js') }}"></script>
         @livewireScripts
     </footer>
-</html>
+
+    </html>
