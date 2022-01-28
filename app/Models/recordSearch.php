@@ -8,4 +8,14 @@ use Illuminate\Database\Eloquent\Model;
 class RecordSearch extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'ip',
+        'device',
+        'navigator',
+        'version',
+        'searchCity',
+        'searchCountryState',
+        'countryId',
+    ];
 }

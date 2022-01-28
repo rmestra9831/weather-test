@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\RecordSearchController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,6 +14,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('home');
-});
+Route::get('/', function () {return view('home');});
+
+Route::get('/records', [RecordSearchController::class, 'index'])->name('records');
+Route::post('saveSearch', [RecordSearchController::class ,'saveSearch'])->name('record.save');

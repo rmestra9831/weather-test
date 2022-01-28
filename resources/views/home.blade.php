@@ -93,6 +93,7 @@
                         <div class="card h-auto p-4 mb-4">
                             <p class="text-center h5">Buscar Ciudad</p>
                             <div class="input-group input-group-outline">
+                                @csrf
                                 <input type="text" id="city" class="form-control">
                                 <button onclick="searchCity()" type="button" class="btn btn-info m-0"><i
                                         class="fas fa-search"></i></button>
@@ -107,30 +108,7 @@
                 </div>
             </div>
         </section>
-        {{-- footer --}}
-        <div class="py-5">
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-5 ms-auto">
-                        <h4 class="mb-1">Desarrollado por Richard Mestra</h4>
-                    </div>
-                    <div class="col-lg-5 me-lg-auto my-lg-auto text-lg-end mt-5">
-                        <a href="https://twitter.com/intent/tweet?text=Check%20Material%20Design%20System%20made%20by%20%40CreativeTim%20%23webdesign%20%23designsystem%20%23bootstrap5&amp;url=https%3A%2F%2Fwww.creative-tim.com%2Fproduct%2Fmaterial-design-system-pro"
-                            class="btn btn-twitter mb-0 me-2" target="_blank">
-                            <i class="fab fa-twitter me-1" aria-hidden="true"></i> Tweet
-                        </a>
-                        <a href="https://www.facebook.com/sharer/sharer.php?u=https://www.creative-tim.com/product/material-design-system-pro"
-                            class="btn btn-facebook mb-0 me-2" target="_blank">
-                            <i class="fab fa-facebook-square me-1" aria-hidden="true"></i> Share
-                        </a>
-                        <a href="https://www.pinterest.com/pin/create/button/?url=https://www.creative-tim.com/product/material-design-system-pro"
-                            class="btn btn-pinterest mb-0 me-2" target="_blank">
-                            <i class="fab fa-pinterest me-1" aria-hidden="true"></i> Pin it
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
+        @include('layouts.footer')
     </div>
     @include('common.default-modal')
 @endsection
@@ -228,6 +206,16 @@
                             stateLocation = response.data[0]['Country']['LocalizedName']+'-'+response.data[0]['AdministrativeArea']['LocalizedName'];
                             searchWeather(response.data[0]['GeoPosition']['Latitude'], response.data[0]['GeoPosition']['Longitude'], response.data[0]['LocalizedName'], stateLocation);
                             modal.hide();
+                            $.ajax({
+                                type: "POST",
+                                url: "{!! route('record.save') !!}",
+                                data: response.data[0],
+                                headers: {'X-CSRF-TOKEN': $('input[name="_token"]').attr('value')},
+                                dataType: "dataType",
+                                success: function (response) {
+                                    console.log(response);
+                                }
+                            });
                         }
                     }
                 })

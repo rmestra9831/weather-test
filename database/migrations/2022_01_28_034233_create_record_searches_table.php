@@ -15,6 +15,13 @@ class CreateRecordSearchesTable extends Migration
     {
         Schema::create('record_searches', function (Blueprint $table) {
             $table->id();
+            $table->string('ip');
+            $table->string('device');
+            $table->string('navigator');
+            $table->string('version');
+            $table->string('searchCity');
+            $table->string('searchCountryState');
+            $table->string('countryId');
             $table->timestamps();
         });
     }
