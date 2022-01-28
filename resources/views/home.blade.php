@@ -53,12 +53,12 @@
                                             <hr class="mt-0">
                                             <h6 class="text-white mb-0">Temperatura Max - Min</h6>
                                             <div class="maxmin">
-                                                <h2><span 
-                                                        x-html="weather.maxmintemp.max"></span><small class="contentArrowTemp">°<i
-                                                            class="fas fa-arrow-up"></i></small></h2>
-                                                <h2><span
-                                                        x-html="weather.maxmintemp.min"></span><small class="contentArrowTemp">°<i
-                                                            class="fas fa-arrow-down"></i></small></h2>
+                                                <h2><span x-html="weather.maxmintemp.max"></span><small
+                                                        class="contentArrowTemp">°<i class="fas fa-arrow-up"></i></small>
+                                                </h2>
+                                                <h2><span x-html="weather.maxmintemp.min"></span><small
+                                                        class="contentArrowTemp">°<i class="fas fa-arrow-down"></i></small>
+                                                </h2>
                                             </div>
                                         </div>
                                     </div>
@@ -67,7 +67,9 @@
                                         <div class="card-body pt-auto text-center">
                                             <h2><span style="font-size: 5rem;" x-html="weather.humidity"></span>%</h2>
                                             <h3 class="text-white mt-n4">Humedad</h3>
-
+                                            <button type="button"
+                                                x-on:click="setLocationMap(weather.location.lat, weather.location.lng)"
+                                                class="btn btn-info btn-sm btn-location-tem">Ver en mapa</button>
                                         </div>
                                     </div>
                                 </div>
@@ -89,24 +91,28 @@
                     </div>
                     <div class="col-md-4 col-sm-12 order-md-last order-first">
                         <div class="card h-auto p-4 mb-4">
-                            <strong class="text-center h5">Buscar Ciudad</strong>
-                            <form action="">
-                                <div class="input-group input-group-outline">
-                                    <input type="text" class="form-control">
+                            <p class="text-center h5">Buscar Ciudad</p>
+                            <div class="input-group input-group-outline">
+                                <input type="text" id="city" class="form-control">
+                                <button onclick="searchCity()" type="button" class="btn btn-info m-0"><i
+                                        class="fas fa-search"></i></button>
+                            </div>
+                            <div class="card mt-3">
+                                <div class="card-body show-info-weather">
+                                    Ciudad no seleccionada
                                 </div>
-                            </form>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
-        <!-- -------   START PRE-FOOTER 2 - simple social line w/ title & 3 buttons    -------- -->
+        {{-- footer --}}
         <div class="py-5">
             <div class="container">
                 <div class="row">
                     <div class="col-lg-5 ms-auto">
-                        <h4 class="mb-1">Thank you for your support!</h4>
-                        <p class="lead mb-0">We deliver the best web products</p>
+                        <h4 class="mb-1">Desarrollado por Richard Mestra</h4>
                     </div>
                     <div class="col-lg-5 me-lg-auto my-lg-auto text-lg-end mt-5">
                         <a href="https://twitter.com/intent/tweet?text=Check%20Material%20Design%20System%20made%20by%20%40CreativeTim%20%23webdesign%20%23designsystem%20%23bootstrap5&amp;url=https%3A%2F%2Fwww.creative-tim.com%2Fproduct%2Fmaterial-design-system-pro"
@@ -125,35 +131,35 @@
                 </div>
             </div>
         </div>
-        <!-- -------   END PRE-FOOTER 2 - simple social line w/ title & 3 buttons    -------- -->
     </div>
+    @include('common.default-modal')
+@endsection
+@section('script')
     <script>
-        function weather() {
-            return {
-                listWeather: [],
-                loadWeather: function() {
-                    window.axios.get('/api/getDefaultsCountry', {})
-                        .then((response) => {
-                            // console.log(response.data)
-                            this.listWeather = response.data
-                        })
-                    setInterval(() => {
-                        window.axios.get('/api/getDefaultsCountry', {})
-                            .then((response) => {
-                                // console.log(response.data)
-                                this.listWeather = response.data
-                            })
-                    }, 15000);
-                }
-            }
-        }
+        // function weather() {
+        //     return {
+        //         listWeather: [],
+        //         loadWeather: function() {
+        //             window.axios.get('/api/getDefaultsCountry', {})
+        //                 .then((response) => {
+        //                     console.log(response.data)
+        //                     this.listWeather = response.data
+        //                 })
+        //             setInterval(() => {
+        //                 window.axios.get('/api/getDefaultsCountry', {})
+        //                     .then((response) => {
+        //                         this.listWeather = response.data
+        //                     })
+        //             }, 15000);
+        //         }
+        //     }
+        // }
 
-        // Inicialización de google maps
         let map, infoWindow;
         // obtención de los datos desde config.app
         var locations = {!! json_encode(config('app.cities')) !!};
+        // Inicialización de google maps
         function initMap() {
-            console.log(parseFloat(locations[2]['lat']));
             map = new google.maps.Map(document.getElementById("map"), {
                 center: {
                     lat: parseFloat(locations[2]['lat']),
@@ -161,6 +167,7 @@
                 },
                 zoom: 4,
             });
+            var infowindow = new google.maps.InfoWindow();
             // Recorrido del array de datos para imprimir los marcadores
             for (i = 0; i < locations.length; i++) {
                 marker = new google.maps.Marker({
@@ -170,11 +177,98 @@
 
                 google.maps.event.addListener(marker, 'click', (function(marker, i) {
                     return function() {
-                        infowindow.setContent(locations[i][0]);
+                        infowindow.setContent(locations[i]['name']);
                         infowindow.open(map, marker);
                     }
                 })(marker, i));
             }
+        }
+
+        // Buscar información del clima
+        function searchCity() {
+            var modal = new bootstrap.Modal(document.getElementById('exampleModal'), {
+                keyboard: false
+            })
+            // inicializando modal
+            var inputValue = $('#city').val();
+            // Conexión a api para buscar las ciudades con su ubicación
+            window.axios.get('http://dataservice.accuweather.com/locations/v1/cities/search?apikey=' +
+                    '{{ env('API_KEY_ACCWEATHER') }}' + '&q=' + inputValue, {})
+                .then((response) => {
+                    if (response.data.length > 1) {
+                        response.data.forEach(element => {
+                            const foundCities = []
+                            var cardInfo = `
+                            <button state="${element['Country']['LocalizedName']} - ${element['AdministrativeArea']['LocalizedName']}" city="${element['LocalizedName']}" lat="${element['GeoPosition']['Latitude']}" lng="${element['GeoPosition']['Longitude']}" class="card my-3 p-2 px-3 w-100 border border-2 btn-select-city">
+                                <strong class="h5 m-0">${element['LocalizedName']}</strong>
+                                <small class="m-0">${element['Country']['LocalizedName']} - ${element['AdministrativeArea']['LocalizedName']}</small>
+                            </button>
+                            `;
+                            // imprime los resultados encontrados en el modal
+                            foundCities.push(cardInfo);
+                            $('#body-city').append(cardInfo);
+                        });
+                        $('.btn-select-city').click(function(e) {
+                            // inicializo la función para traer los datos del clima
+                            searchWeather($(this).attr('lat'), $(this).attr('lng'), $(this).attr('city'), $(this).attr('state'));
+                            modal.hide();
+                        });
+                        modal.toggle()
+                    }
+                    // this.listWeather = response.data
+                })
+                .catch(function(error) {
+                    console.log(error.response);
+                })
+        }
+
+        // funcion para obtener los datos de la api del clima
+        function searchWeather(lat, lng, city, state) {
+            // En este apartado utilizo ajax debido a que con axios me arroja un error
+            $.ajax({
+                type: "get",
+                url: 'https://api.open-meteo.com/v1/forecast?latitude=' + lat + '&longitude=' + lng +
+                    '&hourly=temperature_2m,relativehumidity_2m&daily=temperature_2m_max,temperature_2m_min&timezone=America%2FBogota',
+                dataType: "json",
+                success: function(response) {
+                    console.log(response);
+                    // console.log(response['hourly']['temperature_2m'][0]);
+                    var infoWeather = `
+                    <h4 class="text-center" id="title-show-info">${city}</h4>
+                    <small class="justify-content-center d-flex mt-n2 mb-3">${state}</small>
+                    <hr>
+                    <div>
+                        <strong class="justify-content-center d-flex mt-n3">${response['hourly']['temperature_2m'][0]}°c</strong>
+                        <small class="justify-content-center d-flex mt-n3">Temperatura</small>
+                    </div>
+                    <div class="row text-center mt-4">
+                        <div class="col">
+                            <strong class="justify-content-center d-flex mt-n3" id="maxmin">${response['daily']['temperature_2m_max'][0]}°c</strong>
+                            <small class="justify-content-center d-flex mt-n2">max</small>
+                        </div>
+                        <div class="col">
+                            <strong class="justify-content-center d-flex mt-n3" id="maxmin">${response['daily']['temperature_2m_min'][0]}°c</strong>
+                            <small>min</small>
+                        </div>
+                    </div>
+                    <hr>
+                    <div>
+                        <strong class="justify-content-center d-flex mt-n3">${response['hourly']['relativehumidity_2m'][0]}%</strong>
+                        <small class="justify-content-center d-flex mt-n3">Humedad</small>
+                    </div>
+                    `;
+                    
+                    $('.show-info-weather').html(infoWeather);
+                    setLocationMap(lat, lng);
+                }
+            });
+        }
+
+        // Seteo de ubiacción según la ciudad
+        function setLocationMap(lat, lng) {
+            map.setCenter(new google.maps.LatLng(lat, lng));
+            map.setZoom(13);
+            map.setMapTypeId(google.maps.MapTypeId.ROADMAP)
         }
     </script>
 @endsection

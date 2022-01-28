@@ -6,6 +6,13 @@
   font-size: 1.6rem;
 }
 
+.show-info-weather strong {
+  font-size: 3rem;
+}
+.show-info-weather #maxmin {
+  font-size: 1.7rem !important;
+}
+
 .contentArrowTemp {
   align-items: center !important;
   display: inline-flex !important;
