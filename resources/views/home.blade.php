@@ -32,7 +32,6 @@
                     <div class="row">
                         <div class="row justify-content-center text-center my-sm-5">
                             <div class="col-lg-6">
-                                <span class="badge badge-primary mb-3">Infinite combinations</span>
                                 <h2 class="text-dark mb-0">Estado del Clima</h2>
                                 <p class="lead">A continuación se muestran estas 3 ciudades principales</p>
                             </div>
@@ -44,7 +43,7 @@
                             <div class="rotating-card-container">
                                 <div
                                     class="card card-rotate card-background card-background-mask-primary shadow-primary mt-md-0 mt-5">
-                                    <div class="front front-background" :style="{ backgroundImage: url(" weather.image") }"
+                                    <div x-data="{urlImage: weather.image}" x-bind:style="`background-image: url(${urlImage})`" class="front front-background w-100"
                                         style="background-size: cover;">
                                         <div class="card-body py-5 text-center">
                                             <h3>Hoy</h3>
@@ -62,8 +61,8 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="back back-background"
-                                        style="background-image: url(https://images.unsplash.com/photo-1498889444388-e67ea62c464b?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&amp;ixlib=rb-1.2.1&amp;auto=format&amp;fit=crop&amp;w=1365&amp;q=80); background-size: cover;">
+                                    <div class="back back-background" x-data="{urlImage: weather.image}" x-bind:style="`background-image: url(${urlImage})`"
+                                        style="background-size: cover;">
                                         <div class="card-body pt-auto text-center">
                                             <h2><span style="font-size: 5rem;" x-html="weather.humidity"></span>%</h2>
                                             <h3 class="text-white mt-n4">Humedad</h3>
