@@ -10,6 +10,7 @@
                 </button>
             </div>
             <div class="modal-body">
+                <span id="count-cities"></span>
                 <div id="body-city">
                 </div>
             </div>

@@ -195,30 +195,47 @@
             window.axios.get('http://dataservice.accuweather.com/locations/v1/cities/search?apikey=' +
                     '{{ env('API_KEY_ACCWEATHER') }}' + '&q=' + inputValue, {})
                 .then((response) => {
-                    if (response.data.length > 1) {
-                        response.data.forEach(element => {
-                            const foundCities = []
-                            var cardInfo = `
-                            <button state="${element['Country']['LocalizedName']} - ${element['AdministrativeArea']['LocalizedName']}" city="${element['LocalizedName']}" lat="${element['GeoPosition']['Latitude']}" lng="${element['GeoPosition']['Longitude']}" class="card my-3 p-2 px-3 w-100 border border-2 btn-select-city">
-                                <strong class="h5 m-0">${element['LocalizedName']}</strong>
-                                <small class="m-0">${element['Country']['LocalizedName']} - ${element['AdministrativeArea']['LocalizedName']}</small>
-                            </button>
-                            `;
-                            // imprime los resultados encontrados en el modal
-                            foundCities.push(cardInfo);
-                            $('#body-city').append(cardInfo);
+                    if (inputValue.length <= 1) {
+                        swal({
+                            icon: "error",
+                            text: "Ingresa una ciudad valida",
                         });
-                        $('.btn-select-city').click(function(e) {
-                            // inicializo la función para traer los datos del clima
-                            searchWeather($(this).attr('lat'), $(this).attr('lng'), $(this).attr('city'), $(this).attr('state'));
+                    } else if(inputValue.length >= 2) {
+                        if (response.data.length > 1) {
+                            $('#body-city').html('') /* Limpiar modal */
+                            response.data.forEach(element => {
+                                const foundCities = [];
+                                var stateLocation = element['Country']['LocalizedName']+'-'+element['AdministrativeArea']['LocalizedName'];
+                                var cardInfo = `
+                                <button state="${element['Country']['LocalizedName']} - ${element['AdministrativeArea']['LocalizedName']}" city="${element['LocalizedName']}" lat="${element['GeoPosition']['Latitude']}" lng="${element['GeoPosition']['Longitude']}" class="card my-3 p-2 px-3 w-100 border border-2 btn-select-city">
+                                    <strong class="h5 m-0">${element['LocalizedName']}</strong>
+                                    <small class="m-0">${stateLocation}</small>
+                                </button>
+                                `;
+                                // imprime los resultados encontrados en el modal
+                                foundCities.push(cardInfo);
+                                $('#count-cities').html('Se han encontrado '+response.data.length+' coincidencias');
+                                $('#body-city').append(cardInfo);
+                            });
+                            $('.btn-select-city').click(function(e) {
+                                // inicializo la función para traer los datos del clima
+                                searchWeather($(this).attr('lat'), $(this).attr('lng'), $(this).attr('city'), $(this).attr('state'));
+                                modal.hide();
+                            });
+                            modal.toggle()
+                        }else{
+                            stateLocation = response.data[0]['Country']['LocalizedName']+'-'+response.data[0]['AdministrativeArea']['LocalizedName'];
+                            searchWeather(response.data[0]['GeoPosition']['Latitude'], response.data[0]['GeoPosition']['Longitude'], response.data[0]['LocalizedName'], stateLocation);
                             modal.hide();
-                        });
-                        modal.toggle()
+                        }
                     }
-                    // this.listWeather = response.data
                 })
                 .catch(function(error) {
-                    console.log(error.response);
+                    swal({
+                        icon: "error",
+                        text: "Ha ocurrido un error con tu busqueda, por favor verifica la ciudad ingresada",
+                    });
+                    console.log(error);
                 })
         }
 
@@ -260,6 +277,11 @@
                     
                     $('.show-info-weather').html(infoWeather);
                     setLocationMap(lat, lng);
+                    // agregando marcador despues de busqueda
+                    new google.maps.Marker({
+                        position: new google.maps.LatLng(parseFloat(lat), parseFloat(lng)),
+                        map: map
+                    });
                 }
             });
         }
