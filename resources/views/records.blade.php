@@ -64,6 +64,7 @@
                         </table>
                     </div>
                 </div>
+                <div class="card p-2 mt-3 justify-content-center d-flex">{{$records->links('vendor.pagination.bootstrap-4')}}</div>
             </div>
         </section>
         @include('layouts.footer')

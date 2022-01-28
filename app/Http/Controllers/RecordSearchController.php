@@ -5,11 +5,14 @@ namespace App\Http\Controllers;
 use App\Models\RecordSearch;
 use Illuminate\Http\Request;
 use Jenssegers\Agent\Agent;
+use Livewire\WithPagination;
 
 class RecordSearchController extends Controller
 {
+    use WithPagination;
+
     public function index(){
-        $records = RecordSearch::orderBy('created_at','desc')->get();
+        $records = RecordSearch::orderBy('created_at','desc')->paginate(5);
         return view('records', compact('records'));
     }
     public function saveSearch(Request $request){

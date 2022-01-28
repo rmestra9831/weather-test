@@ -37,43 +37,55 @@
                             </div>
                         </div>
                     </div>
+                    <template x-transition x-if="loading">
+                        <div class="text-center">
+                            <div class="spinner-border" role="status">
+                              <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                    </template>
                     {{-- Tarjetas de clima pre-establecidas --}}
-                    <template x-for="(weather,index) in listWeather" :key="">
-                        <div class="col-lg-4 ms-auto me-auto p-lg-4 mt-lg-0 mt-4">
-                            <div class="rotating-card-container">
-                                <div
-                                    class="card card-rotate card-background card-background-mask-primary shadow-primary mt-md-0 mt-5">
-                                    <div x-data="{urlImage: weather.image}" x-bind:style="`background-image: url(${urlImage})`" class="front front-background w-100"
-                                        style="background-size: cover;">
-                                        <div class="card-body py-5 text-center">
-                                            <h3>Hoy</h3>
-                                            <h2><span style="font-size: 5rem;" x-html="weather.temperature"></span>°c</h2>
-                                            <h3 class="text-white text-capitalize mb-0 mt-n4" x-text="weather.city"></h3>
-                                            <hr class="mt-0">
-                                            <h6 class="text-white mb-0">Temperatura Max - Min</h6>
-                                            <div class="maxmin">
-                                                <h2><span x-html="weather.maxmintemp.max"></span><small
-                                                        class="contentArrowTemp">°<i class="fas fa-arrow-up"></i></small>
-                                                </h2>
-                                                <h2><span x-html="weather.maxmintemp.min"></span><small
-                                                        class="contentArrowTemp">°<i class="fas fa-arrow-down"></i></small>
-                                                </h2>
+                    <template x-if="!loading" x-transition>
+                        <template x-transition x-for="(weather,index) in listWeather" :key="">
+                            <div class="col-lg-4 ms-auto me-auto p-lg-4 mt-lg-0 mt-4">
+                                <div class="rotating-card-container">
+                                    <div
+                                        class="card card-rotate card-background card-background-mask-primary shadow-primary mt-md-0 mt-5">
+                                        <div x-data="{urlImage: weather.image}" x-bind:style="`background-image: url(${urlImage})`" class="front front-background w-100"
+                                            style="background-size: cover;">
+                                            <div class="card-body py-5 text-center">
+                                                <h3>Hoy</h3>
+                                                <h2><span style="font-size: 5rem;" x-html="weather.temperature"></span>°c</h2>
+                                                <h3 class="text-white text-capitalize mb-0 mt-n4" x-text="weather.city"></h3>
+                                                <hr class="mt-0">
+                                                <h6 class="text-white mb-0">Temperatura Max - Min</h6>
+                                                <div class="maxmin">
+                                                    <h2><span x-html="weather.maxmintemp.max"></span><small
+                                                            class="contentArrowTemp">°<i class="fas fa-arrow-up"></i></small>
+                                                    </h2>
+                                                    <h2><span x-html="weather.maxmintemp.min"></span><small
+                                                            class="contentArrowTemp">°<i class="fas fa-arrow-down"></i></small>
+                                                    </h2>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="back back-background" x-data="{urlImage: weather.image}" x-bind:style="`background-image: url(${urlImage})`"
-                                        style="background-size: cover;">
-                                        <div class="card-body pt-auto text-center">
-                                            <h2><span style="font-size: 5rem;" x-html="weather.humidity"></span>%</h2>
-                                            <h3 class="text-white mt-n4">Humedad</h3>
-                                            <button type="button"
-                                                x-on:click="setLocationMap(weather.location.lat, weather.location.lng)"
-                                                class="btn btn-info btn-sm btn-location-tem">Ver en mapa</button>
+                                        <div class="back back-background" x-data="{urlImage: weather.image}" x-bind:style="`background-image: url(${urlImage})`"
+                                            style="background-size: cover;">
+                                            <div class="card-body pt-auto text-center">
+                                                <h2><span style="font-size: 5rem;" x-html="weather.humidity"></span>%</h2>
+                                                <h3 class="text-white mt-n4">Humedad</h3>
+                                                <button type="button"
+                                                    x-on:click="
+                                                    setLocationMap(weather.location.lat, weather.location.lng)
+                                                    document.getElementById('map').scrollIntoView();
+                                                    "
+                                                    class="btn btn-info btn-sm  btn-location-tem">Ver en mapa</button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </template>
                     </template>
 
                     {{-- fin de tarjetas de clima pre-establecidas --}}
@@ -85,7 +97,7 @@
                 <div class="row align-items-center">
                     <div class="col-md-8 col-sm-12 order-md-first first-last">
                         <div id="map">
-                            mapa aqui
+                            Mapa
                         </div>
                     </div>
                     <div class="col-md-4 col-sm-12 order-md-last order-first">
@@ -116,10 +128,13 @@
         // Carga de las tarjetas principales
         function weather() {
             return {
+                loading: false,
                 listWeather: [],
                 loadWeather: function() {
+                    this.loading = true
                     window.axios.get('/api/getDefaultsCountry', {})
                         .then((response) => {
+                            this.loading = false
                             this.listWeather = response.data
                         })
                     setInterval(() => {
@@ -268,7 +283,7 @@
                         <small class="justify-content-center d-flex mt-n3">Humedad</small>
                     </div>
                     `;
-                    
+
                     $('.show-info-weather').html(infoWeather);
                     setLocationMap(lat, lng);
                     // agregando marcador despues de busqueda
@@ -276,6 +291,7 @@
                         position: new google.maps.LatLng(parseFloat(lat), parseFloat(lng)),
                         map: map
                     });
+                    // hacer scroll hasta el mapa
                 }
             });
         }
