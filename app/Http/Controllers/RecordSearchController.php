@@ -9,7 +9,7 @@ use Jenssegers\Agent\Agent;
 class RecordSearchController extends Controller
 {
     public function index(){
-        $records = RecordSearch::get();
+        $records = RecordSearch::orderBy('created_at','desc')->get();
         return view('records', compact('records'));
     }
     public function saveSearch(Request $request){
