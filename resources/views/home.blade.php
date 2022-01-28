@@ -136,24 +136,25 @@
 @endsection
 @section('script')
     <script>
-        // function weather() {
-        //     return {
-        //         listWeather: [],
-        //         loadWeather: function() {
-        //             window.axios.get('/api/getDefaultsCountry', {})
-        //                 .then((response) => {
-        //                     console.log(response.data)
-        //                     this.listWeather = response.data
-        //                 })
-        //             setInterval(() => {
-        //                 window.axios.get('/api/getDefaultsCountry', {})
-        //                     .then((response) => {
-        //                         this.listWeather = response.data
-        //                     })
-        //             }, 15000);
-        //         }
-        //     }
-        // }
+        // Carga de las tarjetas principales
+        function weather() {
+            return {
+                listWeather: [],
+                loadWeather: function() {
+                    window.axios.get('/api/getDefaultsCountry', {})
+                        .then((response) => {
+                            console.log(response.data)
+                            this.listWeather = response.data
+                        })
+                    setInterval(() => {
+                        window.axios.get('/api/getDefaultsCountry', {})
+                            .then((response) => {
+                                this.listWeather = response.data
+                            })
+                    }, 15000);
+                }
+            }
+        }
 
         let map, infoWindow;
         // obtención de los datos desde config.app
