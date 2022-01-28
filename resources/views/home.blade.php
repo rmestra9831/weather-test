@@ -121,7 +121,6 @@
                 loadWeather: function() {
                     window.axios.get('/api/getDefaultsCountry', {})
                         .then((response) => {
-                            console.log(response.data)
                             this.listWeather = response.data
                         })
                     setInterval(() => {
@@ -186,7 +185,7 @@
                                 const foundCities = [];
                                 var stateLocation = element['Country']['LocalizedName']+'-'+element['AdministrativeArea']['LocalizedName'];
                                 var cardInfo = `
-                                <button state="${element['Country']['LocalizedName']} - ${element['AdministrativeArea']['LocalizedName']}" city="${element['LocalizedName']}" lat="${element['GeoPosition']['Latitude']}" lng="${element['GeoPosition']['Longitude']}" class="card my-3 p-2 px-3 w-100 border border-2 btn-select-city">
+                                <button data='${JSON.stringify(element)}' state="${element['Country']['LocalizedName']} - ${element['AdministrativeArea']['LocalizedName']}" city="${element['LocalizedName']}" lat="${element['GeoPosition']['Latitude']}" lng="${element['GeoPosition']['Longitude']}" class="card my-3 p-2 px-3 w-100 border border-2 btn-select-city">
                                     <strong class="h5 m-0">${element['LocalizedName']}</strong>
                                     <small class="m-0">${stateLocation}</small>
                                 </button>
@@ -200,6 +199,16 @@
                                 // inicializo la función para traer los datos del clima
                                 searchWeather($(this).attr('lat'), $(this).attr('lng'), $(this).attr('city'), $(this).attr('state'));
                                 modal.hide();
+                                $.ajax({
+                                    type: "POST",
+                                    url: "{!! route('record.save') !!}",
+                                    data: JSON.parse($(this).attr('data')),
+                                    headers: {'X-CSRF-TOKEN': $('input[name="_token"]').attr('value')},
+                                    dataType: "dataType",
+                                    success: function (response) {
+                                        console.log('success');
+                                    }
+                                });
                             });
                             modal.toggle()
                         }else{
@@ -213,7 +222,7 @@
                                 headers: {'X-CSRF-TOKEN': $('input[name="_token"]').attr('value')},
                                 dataType: "dataType",
                                 success: function (response) {
-                                    console.log(response);
+                                    console.log('success');
                                 }
                             });
                         }
@@ -224,7 +233,6 @@
                         icon: "error",
                         text: "Ha ocurrido un error con tu busqueda, por favor verifica la ciudad ingresada",
                     });
-                    console.log(error);
                 })
         }
 
@@ -237,8 +245,6 @@
                     '&hourly=temperature_2m,relativehumidity_2m&daily=temperature_2m_max,temperature_2m_min&timezone=America%2FBogota',
                 dataType: "json",
                 success: function(response) {
-                    console.log(response);
-                    // console.log(response['hourly']['temperature_2m'][0]);
                     var infoWeather = `
                     <h4 class="text-center" id="title-show-info">${city}</h4>
                     <small class="justify-content-center d-flex mt-n2 mb-3">${state}</small>

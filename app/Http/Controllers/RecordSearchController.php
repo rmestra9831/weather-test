@@ -15,7 +15,6 @@ class RecordSearchController extends Controller
     public function saveSearch(Request $request){
         if ($request->ajax()) {
             $agent = new Agent();
-
             $dataDevice = [
                 'ip'        => $request->ip(),
                 'device'    => $agent->platform(),
